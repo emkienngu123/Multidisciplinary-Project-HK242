@@ -1,0 +1,10 @@
+import lancedb
+lancedb_instance = lancedb.connect('database.lance')
+temp = lancedb_instance['LIGHT'].to_pandas()
+print(temp)
+temp = lancedb_instance['HUMIDITY'].to_pandas()
+print(temp)
+temp = lancedb_instance['MOVEMENT'].to_pandas()
+print(temp)
+temp = lancedb_instance['TEMPERATURE'].to_pandas()
+print(temp)
