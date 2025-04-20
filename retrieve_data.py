@@ -10,7 +10,7 @@ feeds =  AIO_FEED_ID
 
 for feed in feeds:
     feed_key = feed
-    all_entries = aio.data(feed_key, max_results=None)
+    all_entries = aio.data(feed_key, max_results=600)
     csv_filename = feed_key + '.csv'
     fieldnames   = ['id', 'created_at', 'value']
 
