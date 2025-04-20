@@ -6,6 +6,7 @@ import pyarrow as pa
 import datetime
 import pandas as pd
 from env import *
+import random
 
 feeds =  AIO_FEED_ID
 
@@ -129,9 +130,12 @@ try:
         user_input = input("Enter data to send to the dashboard: ")
         # Publish the user input to the designated feed
         client.publish('yolo-fan-device', user_input)
-        print(f"Sent: {user_input}")
+        light_intensity = random.randint(0,100)
+        client.publish('yolo-light-led',light_intensity)
+        print(f"Sent fan speed: {user_input}")
+        print(f'Sent light intensity: {light_intensity}')
         # Add a small delay if necessary
-        time.sleep(1)
+        time.sleep(10)
 except KeyboardInterrupt:
     print("Exiting...")
     client.disconnect()
