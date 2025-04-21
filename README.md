@@ -3,5 +3,7 @@ python .\IoTGateWay.py : collect data from Adafruit Dashboard
 
 
 train AI model
+
 cd AI
+
 python train.py --cfg cfg/main.yaml > outputs/smarthome.log
