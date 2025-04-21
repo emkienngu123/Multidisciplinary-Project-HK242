@@ -1,3 +1,4 @@
 env.py
 database.lance
+*.pth
 __pycache__

@@ -1,0 +1,26 @@
+dataset:
+  base_path: './dataset'
+  window_size: 5
+model:
+  d_in: 4
+  d_model: 64
+  num_layers: 3
+  dropout: 0.1
+  bidirectional: false
+loss:
+  fan_weight: 1
+  light_weight: 1
+  reconstruct_weight: 1
+  regress_type: 'L1'
+  beta: 1.0
+optimizer:
+  name: 'adam'
+  lr: 0.001
+  weight_decay: 0.0001
+scheduler:
+  name: 'None'
+train:
+  batch_size: 16
+  epoch: 10
+  num_workers: 4
+  save_path: './outputs'
