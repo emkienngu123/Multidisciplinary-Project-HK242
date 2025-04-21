@@ -4,11 +4,12 @@ import torch.nn.functional as F
 
 
 class SmartHomeLoss(nn.Module):
-    def __init__(self, weight_fan=1.0, weight_light=1.0, weight_reconstruction=1.0, regress_type='L1', **kwargs):
+    def __init__(self, weight_fan=1.0, weight_light=1.0, weight_reg_reconstruction=1.0, weight_cls_reconstruction=1.0, regress_type='L1', **kwargs):
         super(SmartHomeLoss, self).__init__()
         self.weight_fan = weight_fan
         self.weight_light = weight_light
-        self.weight_reconstruction = weight_reconstruction
+        self.weight_reg_reconstruction = weight_reg_reconstruction
+        self.weight_cls_reconstruction = weight_cls_reconstruction
         if regress_type == 'L1':
             self.fan_loss = nn.L1Loss()
             self.light_loss = nn.L1Loss()
@@ -30,7 +31,8 @@ class SmartHomeLoss(nn.Module):
         
         total_loss = (self.weight_fan * fan_loss +
                       self.weight_light * light_loss +
-                      self.weight_reconstruction * (reconstruction_reg_loss + reconstruction_cls_loss))
+                      self.weight_reg_reconstruction * reconstruction_reg_loss +
+                      self.weight_cls_reconstruction * reconstruction_cls_loss)
         
         # Create a loss dictionary for logging
         loss_dict = {

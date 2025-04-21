@@ -10,7 +10,8 @@ model:
 loss:
   fan_weight: 1
   light_weight: 1
-  reconstruct_weight: 1
+  reonstruct_regress_weight: 1
+  reconstruct_clss_weight: 5
   regress_type: 'L1'
   beta: 1.0
 optimizer:
@@ -21,6 +22,6 @@ scheduler:
   name: 'None'
 train:
   batch_size: 16
-  epoch: 10
+  epoch: 20
   num_workers: 4
   save_path: './outputs'
