@@ -5,7 +5,7 @@ from optimizer import get_optim, get_scheduler
 import torch
 import os
 from tqdm import tqdm
-
+import glob
 class Trainer:
     def __init__(self, device, cfg):
         self.device = device
@@ -167,7 +167,15 @@ class Trainer:
         if self.best_model is not None:
             torch.save(self.best_model, os.path.join(self.save_path, f'best_epoch_{self.best_epoch}.pth'))
             print(f'Best model saved at epoch {self.best_epoch}')
+    def remove_non_best_checkpoints(self):
+        """Remove all saved checkpoints except the best checkpoint."""
+        checkpoint_files = glob.glob(os.path.join(self.save_path, 'epoch_*.pth'))
+        best_checkpoint = os.path.join(self.save_path, f'best_epoch_{self.best_epoch}.pth')
 
+        for checkpoint in checkpoint_files:
+            if checkpoint != best_checkpoint:
+                os.remove(checkpoint)
+                print(f'Removed checkpoint: {checkpoint}')
     def train(self):
         for epoch in range(1, self.epoch + 1):
             train_loss, train_loss_logs = self.train_one_epoch(epoch)
@@ -181,3 +189,4 @@ class Trainer:
                 self.save_model(epoch)
         print(f'Best validation loss: {self.best_val_loss:.4f} at epoch {self.best_epoch}')
         self.save_best_epoch()
+        self.remove_non_best_checkpoints()

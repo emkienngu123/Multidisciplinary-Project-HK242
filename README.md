@@ -2,13 +2,13 @@ create file env.py and declare your Adafruit AIO_FEED_ID,AIO_USERNAME and AIO_KE
 python .\IoTGateWay.py : collect data from Adafruit Dashboard
 
 
-train AI model
+train SmartHome model
 ```
-cd AI
+cd AI/SmartHome
 python train.py --cfg cfg/main.yaml > outputs/smarthome.log
 ```
-inference AI model
+inference SmartHome model
 ```
-cd AI
+cd AI/SmartHome
 python inference.py --cfg cfg/main.yaml
 ```
