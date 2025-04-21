@@ -10,8 +10,8 @@ model:
 loss:
   fan_weight: 1
   light_weight: 1
-  reonstruct_regress_weight: 1
-  reconstruct_clss_weight: 5
+  reconstruct_regress_weight: 1
+  reconstruct_cls_weight: 5
   regress_type: 'L1'
   beta: 1.0
 optimizer:

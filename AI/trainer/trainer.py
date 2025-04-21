@@ -21,8 +21,8 @@ class Trainer:
         self.crieterion = SmartHomeLoss(
             weight_fan=cfg['loss']['fan_weight'],
             weight_light=cfg['loss']['light_weight'],
-            weight_reg_reconstruction=cfg['loss']['reg_reconstruction_weight'],
-            weight_cls_reconstruction=cfg['loss']['cls_reconstruction_weight'],
+            weight_reg_reconstruction=cfg['loss']['reconstruct_regress_weight'],
+            weight_cls_reconstruction=cfg['loss']['reconstruct_cls_weight'],
             regress_type=cfg['loss']['regress_type'],
             beta=cfg['loss']['beta']
         ).to(device)
