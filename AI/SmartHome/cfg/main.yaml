@@ -28,5 +28,5 @@ train:
 inference:
   batch_size: 1
   num_workers: 4
-  checkpoint: 'best_epoch_18.pth'
+  checkpoint: 'best_epoch_25.pth'
   threshold_anomaly: 12.0
