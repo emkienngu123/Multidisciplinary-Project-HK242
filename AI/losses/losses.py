@@ -44,5 +44,20 @@ class SmartHomeLoss(nn.Module):
         }
         
         return total_loss, loss_dict
+    def calculate_only_reconstruct(self, reconstruction, reconstruction_target):
+        reconstruction_reg_loss = self.reconstruction_reg_loss(reconstruction[:, :, :3], reconstruction_target[:, :, :3])
+        reconstruction_cls_loss = self.reconstruction_cls_loss(reconstruction[:, :, 3:], reconstruction_target[:, :, 3:].float())
+        
+        total_loss = (self.weight_reg_reconstruction * reconstruction_reg_loss +
+                      self.weight_cls_reconstruction * reconstruction_cls_loss)
+        
+        # Create a loss dictionary for logging
+        loss_dict = {
+            'reconstruction_reg_loss': reconstruction_reg_loss.item(),
+            'reconstruction_cls_loss': reconstruction_cls_loss.item(),
+            'total_loss': total_loss.item()
+        }
+        
+        return total_loss, loss_dict
 
 
