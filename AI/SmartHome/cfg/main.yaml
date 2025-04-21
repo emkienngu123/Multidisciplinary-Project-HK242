@@ -22,7 +22,7 @@ scheduler:
   name: 'None'
 train:
   batch_size: 16
-  epoch: 5
+  epoch: 30
   num_workers: 4
   save_path: './outputs'
 inference:
