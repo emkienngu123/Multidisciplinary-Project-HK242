@@ -1,8 +1,6 @@
 from dataset import SmartHomeDataset
 from model import SmartHome
 import torch
-import torch.nn as nn
-import torch.nn.functional as F
 from torch.utils.data import DataLoader
 import os
 from losses import SmartHomeLoss
@@ -99,4 +97,3 @@ def main():
     print('\nInference finished.')
 if __name__ == '__main__':
     main()
-        
