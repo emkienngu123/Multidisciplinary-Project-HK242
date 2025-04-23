@@ -28,7 +28,7 @@ class VoiceCommand(nn.Module):
             nn.Softmax(dim=-1)
         )
     def forward(self, x):
-        x = self.feat_extract(x)
+        x, _ = self.feat_extract(x)
         x = torch.mean(x, dim=1)
         x = self.cls_head(x)
         return x

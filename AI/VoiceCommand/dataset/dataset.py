@@ -142,7 +142,7 @@ class VoiceCommandDataset(Dataset):
             signal = self.augmentations(signal)
             signal = self._cut_if_necessary(signal)
             signal = self._right_pad_if_necessary(signal)
-        signal = self.transformation(signal).squeeze(0).transpose(0,1)
+        signal = self.transformation(signal).squeeze(0).transpose(0,1).detach()
 
         if self.train:
             label = self._get_audio_sample_label(index)
@@ -255,8 +255,8 @@ def build_dataset(cfg, anno_file, device, training=False):
 if __name__ == "__main__":
     ANNOTATIONS_FILE = r"C:\Users\dangv\Desktop\Multidisciplinary-Project-HK242\AI\VoiceCommand\data\VOICECOMMAND\train.csv"
     AUDIO_DIR = r"C:\Users\dangv\Desktop\Multidisciplinary-Project-HK242\AI\VoiceCommand\data\VOICECOMMAND"
-    SAMPLE_RATE = 22050
-    NUM_SAMPLES = 110250
+    SAMPLE_RATE = 8000
+    NUM_SAMPLES = 40000
 
     if torch.cuda.is_available():
         device = "cuda"
@@ -266,8 +266,8 @@ if __name__ == "__main__":
 
     mel_spectrogram = T.MFCC(
         sample_rate=SAMPLE_RATE,
-        n_mfcc=64,
-        melkwargs={"n_fft": 1024, "hop_length": 512, "n_mels": 64},
+        n_mfcc=32,
+        melkwargs={"n_fft": 1024, "hop_length": 512, "n_mels": 32},
     )
     # Define augmentations
     augmentations = Compose([
@@ -289,7 +289,7 @@ if __name__ == "__main__":
                                         device,
                                         augmentations=augmentations,
                                         train=True)
-    train_loader = torch.utils.data.DataLoader(train_dataset, batch_size=1, shuffle=True)
+    train_loader = torch.utils.data.DataLoader(train_dataset, batch_size=16, shuffle=True)
     print(f"There are {len(train_loader)} samples in the training dataset.")
     signal, label = next(iter(train_loader))
     print(f"Signal shape (train): {signal.shape}")

@@ -5,6 +5,7 @@ from losses import build_loss
 from optimizer import get_optim, get_scheduler
 import os
 import torch
+from tqdm import tqdm
 
 class Trainer:
     def __init__(self, device, cfg):
@@ -87,7 +88,9 @@ class Trainer:
         self.model.train()
         total_loss = 0
 
-        for i, (inputs, labels) in enumerate(self.train_dataset):
+        # Add tqdm for the training loop
+        progress_bar = tqdm(enumerate(self.train_dataset), total=len(self.train_dataset), desc=f"Epoch {epoch}/{self.epoch} - Training")
+        for i, (inputs, labels) in progress_bar:
             inputs = inputs.to(self.device)
             labels = labels.to(self.device)
 
@@ -98,16 +101,21 @@ class Trainer:
             self.optimizer.step()
 
             total_loss += loss.item()
+            progress_bar.set_postfix({"Loss": loss.item()})
+
         avg_loss = total_loss / len(self.train_dataset)
         print(f'Epoch [{epoch}/{self.epoch}], Loss: {avg_loss:.4f}')
         return avg_loss
+
     def validate(self, epoch):
         self.model.eval()
         total_loss = 0
         accuracy = 0.0
 
+        # Add tqdm for the validation loop
+        progress_bar = tqdm(enumerate(self.val_dataset), total=len(self.val_dataset), desc=f"Epoch {epoch}/{self.epoch} - Validation")
         with torch.no_grad():
-            for i, (inputs, labels) in enumerate(self.val_dataset):
+            for i, (inputs, labels) in progress_bar:
                 inputs = inputs.to(self.device)
                 labels = labels.to(self.device)
 
@@ -117,20 +125,14 @@ class Trainer:
                 total_loss += loss.item()
                 _, predicted = torch.max(outputs.data, 1)
                 accuracy += (predicted == labels).sum().item()
+
+                progress_bar.set_postfix({"Loss": loss.item()})
+
         avg_loss = total_loss / len(self.val_dataset)
         accuracy = accuracy / len(self.val_dataset.dataset)
         print(f'Validation Loss: {avg_loss:.4f}, Accuracy: {accuracy:.4f}')
         return avg_loss, accuracy
-    def save_model(self, epoch):
-        if not os.path.exists(self.save_path):
-            os.makedirs(self.save_path)
-        torch.save(self.model.state_dict(), os.path.join(self.save_path, f'model_epoch_{epoch}.pth'))
-        print(f'Model saved at epoch {epoch}')
-    def save_best_model(self):
-        if not os.path.exists(self.save_path):
-            os.makedirs(self.save_path)
-        torch.save(self.best_model, os.path.join(self.save_path, 'best_model.pth'))
-        print('Best model saved')
+
     def train(self):
         for epoch in range(self.epoch):
             train_loss = self.train_one_epoch(epoch)
@@ -147,11 +149,23 @@ class Trainer:
                     self.scheduler.step(val_loss)
                 else:
                     self.scheduler.step()
+
             if (epoch + 1) % 5 == 0:
                 self.save_model(epoch)
+
         print(f'Training completed. Best accuracy: {self.best_acc:.4f} at epoch {self.best_epoch}')
         self.save_best_model()
         self.remove_non_best_checkpoints()
+    def save_model(self, epoch):
+        if not os.path.exists(self.save_path):
+            os.makedirs(self.save_path)
+        torch.save(self.model.state_dict(), os.path.join(self.save_path, f'model_epoch_{epoch}.pth'))
+        print(f'Model saved at epoch {epoch}')
+    def save_best_model(self):
+        if not os.path.exists(self.save_path):
+            os.makedirs(self.save_path)
+        torch.save(self.best_model, os.path.join(self.save_path, 'best_model.pth'))
+        print('Best model saved')
     def remove_non_best_checkpoints(self):
         for filename in os.listdir(self.save_path):
             if filename.startswith('model_epoch_') and filename != f'model_epoch_{self.best_epoch}.pth':

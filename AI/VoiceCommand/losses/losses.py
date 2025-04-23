@@ -6,6 +6,6 @@ class VoiceCommandLoss(nn.Module):
         super().__init__()
         self.loss = nn.CrossEntropyLoss()
     def forward(self, outputs, targets):
-        return self.loss(outputs, targets.float())
+        return self.loss(outputs, targets.long())
 def build_loss(cfg):
     return VoiceCommandLoss(cfg)

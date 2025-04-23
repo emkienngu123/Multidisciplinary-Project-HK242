@@ -14,9 +14,9 @@ dataset:
             min_gain: 0.5
             max_gain: 1.0
         random_freq_mask:
-            max_freq_mask_param: 30
+            max_freq_mask_param: 0
         random_time_mask:
-            max_time_mask_param: 70
+            max_time_mask_param: 0
         random_pitch_shift:
             max_steps: 3
             min_steps: -3
