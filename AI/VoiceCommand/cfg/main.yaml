@@ -1,0 +1,46 @@
+dataset:
+    audio_dir: './data/VOICECOMMAND'
+    sample_rate: 22050
+    num_samples: 110250
+    transformation:
+        n_mfcc: 64
+        n_fft: 1024
+        hop_length: 512
+        n_mels: 64
+    augmentation_rate: 0.5
+    augmentation:
+        rate: 0.5
+        random_vol:
+            min_gain: 0.5
+            max_gain: 1.0
+        random_freq_mask:
+            max_freq_mask_param: 30
+        random_time_mask:
+            max_time_mask_param: 70
+        random_pitch_shift:
+            max_steps: 3
+            min_steps: -3
+        random_time_stretch:
+            min_factor: 0.9
+            max_factor: 1.1
+        random_time_shift:
+            max_shift: 5000
+        add_white_noise:
+            noise_level: 0.005
+model:
+    d_model: 64
+    num_layers: 3
+    dropout: 0.1
+    bidirectional: False
+    d_out: 5
+optimizer:
+  name: 'adam'
+  lr: 0.001
+  weight_decay: 0.0001
+scheduler:
+  name: 'None'
+train:
+  batch_size: 16
+  epoch: 30
+  num_workers: 4
+  save_path: './outputs'

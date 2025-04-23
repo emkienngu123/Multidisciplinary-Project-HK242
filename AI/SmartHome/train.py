@@ -13,7 +13,7 @@ import yaml
 import argparse
 
 parser = argparse.ArgumentParser(description='SmartHome')
-parser.add_argument('--cfg', dest='cfg', help='settings of detection in yaml format')
+parser.add_argument('--cfg', dest='cfg', help='settings of model in yaml format')
 args = parser.parse_args()
 def main():
     cfg = yaml.load(open(args.cfg, 'r'), Loader=yaml.Loader)
