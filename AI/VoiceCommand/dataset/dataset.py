@@ -62,23 +62,6 @@ class RandomPitchShift:
             return pitch_shift_transform(signal)
         return signal
 
-
-class RandomResample:
-    def __init__(self, sample_rate, min_factor=0.8, max_factor=1.2, rate=0.5):
-        self.sample_rate = sample_rate
-        self.min_factor = min_factor
-        self.max_factor = max_factor
-        self.rate = rate
-
-    def __call__(self, signal):
-        if random.random() < self.rate:
-            factor = random.uniform(self.min_factor, self.max_factor)
-            new_sample_rate = int(self.sample_rate * factor)
-            resampler = T.Resample(orig_freq=self.sample_rate, new_freq=new_sample_rate).to(signal.device)
-            return resampler(signal)
-        return signal
-
-
 class RandomTimeShift:
     def __init__(self, max_shift: int, rate=0.5):
         self.max_shift = max_shift
@@ -140,8 +123,6 @@ class VoiceCommandDataset(Dataset):
         # Apply augmentations if provided
         if self.augmentations:
             signal = self.augmentations(signal)
-            signal = self._cut_if_necessary(signal)
-            signal = self._right_pad_if_necessary(signal)
         signal = self.transformation(signal).squeeze(0).transpose(0,1).detach()
 
         if self.train:
@@ -218,15 +199,6 @@ def build_augmentation(cfg):
                                               ['random_pitch_shift']
                                               ['max_steps'],
                                               cfg['dataset']['augmentation']['rate']))
-    if cfg['dataset']['augmentation']['random_time_stretch']:
-        augmentations.append(RandomResample(cfg['dataset']['sample_rate'],
-                                            cfg['dataset']['augmentation']
-                                            ['random_time_stretch']
-                                            ['min_factor'],
-                                            cfg['dataset']['augmentation']
-                                            ['random_time_stretch']
-                                            ['max_factor'],
-                                            cfg['dataset']['augmentation']['rate']))
     if cfg['dataset']['augmentation']['add_white_noise']:
         augmentations.append(AddWhiteNoise(cfg['dataset']['augmentation']
                                            ['add_white_noise']

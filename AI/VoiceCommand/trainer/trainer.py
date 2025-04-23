@@ -67,15 +67,13 @@ class Trainer:
             dataset=self.train_dataset,
             batch_size=cfg['train']['batch_size'],
             shuffle=True,
-            num_workers=cfg['train']['num_workers'],
-            pin_memory=True
+            num_workers=cfg['train']['num_workers']
         )
         self.val_dataset = DataLoader(
             dataset=self.val_dataset,
             batch_size=cfg['train']['batch_size'],
             shuffle=False,
-            num_workers=cfg['train']['num_workers'],
-            pin_memory=True
+            num_workers=cfg['train']['num_workers']
         )
         self.epoch = cfg['train']['epoch']
         self.best_acc = 0.0
