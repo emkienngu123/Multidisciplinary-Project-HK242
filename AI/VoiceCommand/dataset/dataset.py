@@ -17,7 +17,7 @@ class RandomVol:
     def __call__(self, signal):
         if random.random() < self.rate:
             gain = random.uniform(self.min_gain, self.max_gain)
-            vol_transform = T.Vol(gain=gain)
+            vol_transform = T.Vol(gain=gain).to(signal.device)  # Ensure the transform is on the correct device
             return vol_transform(signal)
         return signal
 
@@ -30,7 +30,7 @@ class RandomFrequencyMasking:
     def __call__(self, signal):
         if random.random() < self.rate:
             freq_mask_param = random.randint(0, self.max_freq_mask_param)
-            freq_mask_transform = T.FrequencyMasking(freq_mask_param=freq_mask_param)
+            freq_mask_transform = T.FrequencyMasking(freq_mask_param=freq_mask_param).to(signal.device)
             return freq_mask_transform(signal)
         return signal
 
@@ -43,7 +43,7 @@ class RandomTimeMasking:
     def __call__(self, signal):
         if random.random() < self.rate:
             time_mask_param = random.randint(0, self.max_time_mask_param)
-            time_mask_transform = T.TimeMasking(time_mask_param=time_mask_param)
+            time_mask_transform = T.TimeMasking(time_mask_param=time_mask_param).to(signal.device)
             return time_mask_transform(signal)
         return signal
 
@@ -58,7 +58,7 @@ class RandomPitchShift:
     def __call__(self, signal):
         if random.random() < self.rate:
             n_steps = random.randint(self.min_steps, self.max_steps)
-            pitch_shift_transform = T.PitchShift(sample_rate=self.sample_rate, n_steps=n_steps)
+            pitch_shift_transform = T.PitchShift(sample_rate=self.sample_rate, n_steps=n_steps).to(signal.device)
             return pitch_shift_transform(signal)
         return signal
 
@@ -74,7 +74,7 @@ class RandomResample:
         if random.random() < self.rate:
             factor = random.uniform(self.min_factor, self.max_factor)
             new_sample_rate = int(self.sample_rate * factor)
-            resampler = T.Resample(orig_freq=self.sample_rate, new_freq=new_sample_rate)
+            resampler = T.Resample(orig_freq=self.sample_rate, new_freq=new_sample_rate).to(signal.device)
             return resampler(signal)
         return signal
 
@@ -101,7 +101,7 @@ class AddWhiteNoise:
 
     def __call__(self, signal):
         if random.random() < self.rate:
-            noise = torch.randn_like(signal) * self.noise_level
+            noise = torch.randn_like(signal).to(signal.device) * self.noise_level
             return signal + noise
         return signal
 
@@ -165,7 +165,7 @@ class VoiceCommandDataset(Dataset):
 
     def _resample_if_necessary(self, signal, sr):
         if sr != self.target_sample_rate:
-            resampler = torchaudio.transforms.Resample(sr, self.target_sample_rate)
+            resampler = torchaudio.transforms.Resample(sr, self.target_sample_rate).to(self.device)
             signal = resampler(signal)
         return signal
 
