@@ -44,3 +44,7 @@ train:
   epoch: 30
   num_workers: 4
   save_path: './outputs'
+inference:
+  batch_size: 1
+  num_workers: 4
+  checkpoint: 'best_epoch.pth'
