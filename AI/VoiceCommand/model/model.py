@@ -1,36 +1,40 @@
 import torch
 import torch.nn as nn
-import torch.functional as F
+from transformers import WhisperModel, WhisperProcessor
 
 
-class VoiceCommand(nn.Module):
+class VoiceCommandWhisper(nn.Module):
     def __init__(self, cfg):
         super().__init__()
-        self.d_in = cfg['dataset']['transformation']['n_mfcc']
-        self.d_model = cfg['model']['d_model']
-        self.num_layers = cfg['model']['num_layers']
-        self.dropout = cfg['model']['dropout']
-        self.bidirectional = cfg['model']['bidirectional']
         self.d_out = cfg['model']['d_out']
 
-        self.feat_extract = nn.LSTM(
-            input_size = self.d_in,
-            hidden_size= self.d_model,
-            num_layers= self.num_layers,
-            batch_first=True,
-            dropout=self.dropout,
-            bidirectional=self.bidirectional
-        )
-        self.cls_head = nn.Sequential(
-            nn.Linear(self.d_model, self.d_model),
-            nn.ReLU(True),
-            nn.Linear(self.d_model, self.d_out),
-            nn.Softmax(dim=-1)
-        )
-    def forward(self, x):
-        x, _ = self.feat_extract(x)
-        x = torch.mean(x, dim=1)
-        x = self.cls_head(x)
+        # Load pre-trained Whisper Tiny model
+        self.feature_extractor = WhisperModel.from_pretrained("openai/whisper-tiny")
+
+        # Load WhisperProcessor for preprocessing
+        self.processor = WhisperProcessor.from_pretrained("openai/whisper-tiny")
+
+        # Classification head for fine-tuning
+        self.cls_head = nn.Linear(384, self.d_out)
+
+    def forward(self, x, sampling_rate=16000):
+        # Preprocess input using WhisperProcessor
+        x = x.cpu().numpy()  # Convert to numpy for processor compatibility
+        inputs = self.processor(x, sampling_rate=sampling_rate, return_tensors="pt")
+        input_features = inputs.input_features.to(x.device)  # Shape: (batch_size, num_frames, feature_dim)
+
+        # Extract features using Whisper
+        with torch.no_grad():
+            outputs = self.feature_extractor.encoder(input_features)  # Shape: (batch_size, seq_len, 384)
+            features = outputs.last_hidden_state
+
+        # Pooling (mean over the sequence length)
+        features = torch.mean(features, dim=1)  # Shape: (batch_size, 384)
+
+        # Pass features through the classification head
+        x = self.cls_head(features)
         return x
+
+
 def build_model(cfg):
-    return VoiceCommand(cfg)
+    return VoiceCommandWhisper(cfg)

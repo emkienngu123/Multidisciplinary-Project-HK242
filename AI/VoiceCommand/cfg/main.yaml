@@ -13,22 +13,18 @@ dataset:
             min_gain: 0.6
             max_gain: 1.0
         random_freq_mask:
-            max_freq_mask_param: 10
+            max_freq_mask_param: 30
         random_time_mask:
-            max_time_mask_param: 10
+            max_time_mask_param: 2000
         random_time_shift:
             max_shift: 4000
         add_white_noise:
             noise_level: 0.0001
 model:
-    d_model: 256
-    num_layers: 18
-    dropout: 0.1
-    bidirectional: False
     d_out: 5
 optimizer:
   name: 'adam'
-  lr: 0.001
+  lr: 0.00001
   weight_decay: 0.0001
 scheduler:
   name: 'None'
@@ -40,4 +36,4 @@ train:
 inference:
   batch_size: 1
   num_workers: 0
-  checkpoint: 'best_epoch.pth'
+  checkpoint: 'best_model.pth'

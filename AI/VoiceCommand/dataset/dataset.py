@@ -62,18 +62,6 @@ class RandomTimeShift:
         return signal
 
 
-class AddWhiteNoise:
-    def __init__(self, noise_level=0.005, rate=0.5):
-        self.noise_level = noise_level
-        self.rate = rate
-
-    def __call__(self, signal):
-        if random.random() < self.rate:
-            noise = torch.randn_like(signal).to(signal.device) * self.noise_level
-            return signal + noise
-        return signal
-
-
 class VoiceCommandDataset(Dataset):
     def __init__(self,
                  annotations_file,
@@ -108,7 +96,8 @@ class VoiceCommandDataset(Dataset):
         # Apply augmentations if provided
         if self.augmentations:
             signal = self.augmentations(signal)
-        signal = self.transformation(signal).squeeze(0).transpose(0,1).detach()
+        #signal = self.transformation(signal).squeeze(0).transpose(0,1).detach()
+        signal = signal.squeeze(0)
 
         if self.train:
             label = self._get_audio_sample_label(index)
@@ -178,11 +167,6 @@ def build_augmentation(cfg):
     if cfg['dataset']['augmentation']['random_time_shift']:
         augmentations.append(RandomTimeShift(cfg['dataset']['augmentation']['random_time_shift']['max_shift'],
                                              cfg['dataset']['augmentation']['rate']))
-    if cfg['dataset']['augmentation']['add_white_noise']:
-        augmentations.append(AddWhiteNoise(cfg['dataset']['augmentation']
-                                           ['add_white_noise']
-                                           ['noise_level'],
-                                           cfg['dataset']['augmentation']['rate']))
     return Compose(augmentations)
 
 
