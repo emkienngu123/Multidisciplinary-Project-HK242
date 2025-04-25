@@ -47,21 +47,6 @@ class RandomTimeMasking:
             return time_mask_transform(signal)
         return signal
 
-
-class RandomPitchShift:
-    def __init__(self, sample_rate, min_steps=-3, max_steps=3, rate=0.5):
-        self.sample_rate = sample_rate
-        self.min_steps = min_steps
-        self.max_steps = max_steps
-        self.rate = rate
-
-    def __call__(self, signal):
-        if random.random() < self.rate:
-            n_steps = random.randint(self.min_steps, self.max_steps)
-            pitch_shift_transform = T.PitchShift(sample_rate=self.sample_rate, n_steps=n_steps).to(signal.device)
-            return pitch_shift_transform(signal)
-        return signal
-
 class RandomTimeShift:
     def __init__(self, max_shift: int, rate=0.5):
         self.max_shift = max_shift
@@ -190,15 +175,9 @@ def build_augmentation(cfg):
         augmentations.append(RandomTimeMasking(cfg['dataset']['augmentation']['random_time_mask']
                                                ['max_time_mask_param'],
                                                cfg['dataset']['augmentation']['rate']))
-    if cfg['dataset']['augmentation']['random_pitch_shift']:
-        augmentations.append(RandomPitchShift(cfg['dataset']['sample_rate'],
-                                              cfg['dataset']['augmentation']
-                                              ['random_pitch_shift']
-                                              ['min_steps'],
-                                              cfg['dataset']['augmentation']
-                                              ['random_pitch_shift']
-                                              ['max_steps'],
-                                              cfg['dataset']['augmentation']['rate']))
+    if cfg['dataset']['augmentation']['random_time_shift']:
+        augmentations.append(RandomTimeShift(cfg['dataset']['augmentation']['random_time_shift']['max_shift'],
+                                             cfg['dataset']['augmentation']['rate']))
     if cfg['dataset']['augmentation']['add_white_noise']:
         augmentations.append(AddWhiteNoise(cfg['dataset']['augmentation']
                                            ['add_white_noise']
@@ -210,7 +189,7 @@ def build_augmentation(cfg):
 def build_dataset(cfg, anno_file, device, training=False):
     transformation = build_audio_transformation(cfg)
     augmentations = None
-    if training:
+    if training and anno_file!='val.csv':
         augmentations = build_augmentation(cfg)
     dataset = VoiceCommandDataset(
         annotations_file=anno_file,
@@ -246,8 +225,6 @@ if __name__ == "__main__":
         RandomVol(min_gain=0.3, max_gain=1.0, rate=0.5),  # Random volume adjustment
         RandomFrequencyMasking(max_freq_mask_param=30, rate=0.5),  # Random frequency masking
         RandomTimeMasking(max_time_mask_param=50, rate=0.5),  # Random time masking
-        RandomPitchShift(sample_rate=SAMPLE_RATE, min_steps=-3, max_steps=3, rate=0.5),  # Random pitch shifting
-        RandomResample(sample_rate=SAMPLE_RATE, min_factor=0.8, max_factor=1.2, rate=0.5),  # Random speed change
         RandomTimeShift(max_shift=5000, rate=0.5),  # Random time shift
         AddWhiteNoise(noise_level=0.005, rate=0.5),  # Add white noise
     ])

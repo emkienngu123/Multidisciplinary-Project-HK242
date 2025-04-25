@@ -8,3 +8,5 @@ torchaudio
 soundfile
 librosa
 tqdm
+nltk
+datasets

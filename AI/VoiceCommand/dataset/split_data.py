@@ -8,8 +8,8 @@ csv_filepath = r"c:\Users\dangv\Desktop\Multidisciplinary-Project-HK242\AI\Voice
 data = pd.read_csv(csv_filepath)
 
 # Calculate the split ratio
-train_ratio = 80 / 105
-val_ratio = 25 / 105
+train_ratio = 130 / 155
+val_ratio = 25 / 155
 
 # Split the data into training and validation sets
 train_data, val_data = train_test_split(data, test_size=val_ratio, random_state=42)

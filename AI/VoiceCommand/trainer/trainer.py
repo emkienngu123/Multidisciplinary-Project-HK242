@@ -6,6 +6,7 @@ from optimizer import get_optim, get_scheduler
 import os
 import torch
 from tqdm import tqdm
+import torch.nn as nn
 
 class Trainer:
     def __init__(self, device, cfg):
@@ -96,6 +97,7 @@ class Trainer:
             outputs = self.model(inputs)
             loss = self.criterion(outputs, labels)
             loss.backward()
+            nn.utils.clip_grad_norm_(self.model.parameters(), 5.0)  # Gradient clipping
             self.optimizer.step()
 
             total_loss += loss.item()
