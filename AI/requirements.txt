@@ -7,4 +7,3 @@ torchvision
 torchaudio
 soundfile
 tqdm
-facenet_pytorch
