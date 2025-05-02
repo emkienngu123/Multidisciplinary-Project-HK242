@@ -28,6 +28,7 @@ train:
   num_workers: 2
   save_path: './outputs'
 inference:
-  batch_size: 1
+  vector_database: './data/FACEREG_EMBEDDING'
+  batch_size: 8
   num_workers: 2
-  checkpoint: 'best_model.pth'
+  checkpoint: 'best_epoch_23.pth'

@@ -31,3 +31,15 @@ train FACEREG
 cd AI/FaceReg
 python train.py --cfg cfg/main.yaml > outputs/facereg.log
 ```
+inference FACEREG model
+
+GENERATE VECTOR DATA
+```
+cd AI/FaceReg
+python vector_generate.py --cfg cfg/main.yaml
+```
+INFERENCE
+```
+cd AI/FaceReg
+python inference.py --cfg cfg/main.yaml
+```

@@ -72,7 +72,7 @@ class FaceRegDataset(Dataset):
             img_id = self.data.iloc[idx]['id_name']
             img_path = os.path.join(self.img_dir, img_id, f'{self.data.iloc[idx]["id_num"]}.jpg')
             img = self.get_image(img_path)
-            return img, self.name_to_id[img_id]
+            return img, self.name_to_id[img_id], self.data.iloc[idx]["id_num"]
 
 def build_augmentation(aug_config):
     aug = []

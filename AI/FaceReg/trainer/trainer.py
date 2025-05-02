@@ -123,7 +123,7 @@ class Trainer:
         train_embeddings = []
         train_labels = []
         with torch.no_grad():
-            for batch_idx, (images, labels) in enumerate(tqdm(self.trainval_dataset, desc="Generating Training Embeddings")):
+            for batch_idx, (images, labels, _) in enumerate(tqdm(self.trainval_dataset, desc="Generating Training Embeddings")):
                 images = images
                 embeddings = self.model(images)
                 train_embeddings.append(embeddings)
@@ -137,7 +137,7 @@ class Trainer:
         total_samples = 0
 
         with torch.no_grad():
-            for batch_idx, (val_images, val_labels) in enumerate(tqdm(self.val_dataset, desc=f"Validating Epoch {epoch}/{self.epoch}")):
+            for batch_idx, (val_images, val_labels, _) in enumerate(tqdm(self.val_dataset, desc=f"Validating Epoch {epoch}/{self.epoch}")):
                 val_images = val_images.to(self.device)
                 val_labels = val_labels.to(self.device)
                 val_embeddings = self.model(val_images)
