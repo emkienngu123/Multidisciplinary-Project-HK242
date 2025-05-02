@@ -25,3 +25,9 @@ inference VoiceCommand model
 cd AI/VoiceCommand
 python inference.py --cfg cfg/main.yaml
 ```
+
+train FACEREG
+```
+cd AI/FaceReg
+python train.py --cfg cfg/main.yaml > outputs/facereg.log
+```

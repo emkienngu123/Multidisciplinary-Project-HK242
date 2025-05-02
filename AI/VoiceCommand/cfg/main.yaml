@@ -30,7 +30,7 @@ scheduler:
   name: 'None'
 train:
   batch_size: 8
-  epoch: 3
+  epoch: 30
   num_workers: 0
   save_path: './outputs'
 inference:

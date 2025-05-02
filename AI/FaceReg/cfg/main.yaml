@@ -14,3 +14,20 @@ dataset:
       hue: 0.1
 model:
   embedding_size: 256
+loss:
+  margin: 1.0
+optimizer:
+  name: 'adam'
+  lr: 0.000001
+  weight_decay: 0.0001
+scheduler:
+  name: 'None'
+train:
+  batch_size: 8
+  epoch: 30
+  num_workers: 2
+  save_path: './outputs'
+inference:
+  batch_size: 1
+  num_workers: 2
+  checkpoint: 'best_model.pth'
