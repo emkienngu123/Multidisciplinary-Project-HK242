@@ -58,7 +58,7 @@ def generate_vector_for_train_data(cfg, device):
             3: 'MINH'
     }
     for embedding, label, id_num in zip(embeddings, labels, id_nums):
-        print('Save ' + str(embedding) + ' to ' + str(os.path.join(cfg['inference']['vector_database'], mapping_id_to_name[label], str(id_num)+'.npy')))
+        print('Save ' + str(embedding.shape) + ' to ' + str(os.path.join(cfg['inference']['vector_database'], mapping_id_to_name[label], str(id_num)+'.npy')))
         np.save(os.path.join(cfg['inference']['vector_database'], mapping_id_to_name[label], str(id_num)+'.npy'), embedding)
 def main():
     cfg = yaml.load(open(args.cfg, 'r'), Loader=yaml.Loader)

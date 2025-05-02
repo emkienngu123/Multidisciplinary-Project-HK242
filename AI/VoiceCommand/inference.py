@@ -15,7 +15,7 @@ sys.path.append(ROOT_DIR)
 import yaml
 import argparse
 
-parser = argparse.ArgumentParser(description='SmartHome')
+parser = argparse.ArgumentParser(description='VoiceCommand')
 parser.add_argument('--cfg', dest='cfg', help='settings of model in yaml format')
 args = parser.parse_args()
 
@@ -29,7 +29,6 @@ class Inferencer:
         self.model.eval()
         self.dataset = build_dataset(cfg, 'test.csv', self.device, False)
         self.dataloader = DataLoader(self.dataset, batch_size=cfg['inference']['batch_size'], shuffle=False, num_workers=cfg['inference']['num_workers'])
-        self.crieterion = build_loss(cfg).to(device)
     def inference(self):
         all_voice_preds = []
 

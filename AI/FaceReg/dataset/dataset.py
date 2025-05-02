@@ -73,6 +73,28 @@ class FaceRegDataset(Dataset):
             img_path = os.path.join(self.img_dir, img_id, f'{self.data.iloc[idx]["id_num"]}.jpg')
             img = self.get_image(img_path)
             return img, self.name_to_id[img_id], self.data.iloc[idx]["id_num"]
+class FaceRegDatasetTest(Dataset):
+    def __init__(self, cfg):
+        super().__init__()
+        self.anno_dir = cfg['dataset']['anno_dir']
+        self.img_dir = cfg['dataset']['img_dir']
+        self.img_size = cfg['dataset']['img_size']
+        self.transformation = transforms.Compose([
+            transforms.Resize((self.img_size[0], self.img_size[1])),
+            transforms.ToTensor()
+        ])
+        self.data = pd.read_csv(os.path.join(self.anno_dir,'test.csv'))
+    def __len__(self):
+        return len(self.data)
+    def get_image(self, img_path):
+        img = Image.open(img_path).convert('RGB')
+        img = self.transformation(img)
+        return img
+    def __getitem__(self, idx):
+        name_img = str(self.data.iloc[idx]['name_img'])
+        img_path = os.path.join(self.img_dir, 'TEST', name_img)
+        img = self.get_image(img_path)
+        return img, name_img
 
 def build_augmentation(aug_config):
     aug = []
@@ -90,4 +112,7 @@ def build_augmentation(aug_config):
     return transforms.Compose(aug) if len(aug) > 0 else None
 
 def build_dataset(cfg, mode='train'):
-    return FaceRegDataset(cfg, mode)
+    if mode != 'test':
+        return FaceRegDataset(cfg, mode)
+    else:
+        return FaceRegDatasetTest(cfg)

@@ -12,7 +12,7 @@ sys.path.append(ROOT_DIR)
 import yaml
 import argparse
 
-parser = argparse.ArgumentParser(description='SmartHome')
+parser = argparse.ArgumentParser(description='VoiceCommand')
 parser.add_argument('--cfg', dest='cfg', help='settings of model in yaml format')
 args = parser.parse_args()
 
