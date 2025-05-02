@@ -18,8 +18,7 @@ class FaceRegDataset(Dataset):
             transforms.ToTensor()
         ])
         self.augmentation = build_augmentation(cfg['dataset']['augmentation']) if mode == 'train' else None
-        self.data = pd.read_csv(os.path.join(self.anno_dir, 'train.csv')) if mode == 'train' else pd.read_csv(os.path.join(self.anno_dir, 'val.csv')) if mode == 'val' else pd.read_csv(os.path.join(self.anno_dir, 'test.csv'))
-
+        self.data = pd.read_csv(os.path.join(self.anno_dir,mode+'.csv'))
         self.id_dict = {
             0: 'KIEN',
             1: 'KIET',

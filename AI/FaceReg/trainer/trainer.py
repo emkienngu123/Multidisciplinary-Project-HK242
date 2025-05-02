@@ -67,11 +67,18 @@ class Trainer:
             self.scheduler = None
 
         self.train_dataset = build_dataset(cfg, 'train')
+        self.trainval_dataset = build_dataset(cfg, 'trainval')
         self.val_dataset = build_dataset(cfg, 'val')
         self.train_dataset = DataLoader(
             dataset=self.train_dataset,
             batch_size=cfg['train']['batch_size'],
             shuffle=True,
+            num_workers=cfg['train']['num_workers']
+        )
+        self.trainval_dataset = DataLoader(
+            dataset=self.trainval_dataset,
+            batch_size=cfg['train']['batch_size'],
+            shuffle=False,
             num_workers=cfg['train']['num_workers']
         )
         self.val_dataset = DataLoader(
@@ -116,7 +123,7 @@ class Trainer:
         train_embeddings = []
         train_labels = []
         with torch.no_grad():
-            for batch_idx, (images, _, _, labels) in enumerate(tqdm(self.train_dataset, desc="Generating Training Embeddings")):
+            for batch_idx, (images, labels) in enumerate(tqdm(self.trainval_dataset, desc="Generating Training Embeddings")):
                 images = images
                 embeddings = self.model(images)
                 train_embeddings.append(embeddings)
