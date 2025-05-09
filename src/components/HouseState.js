@@ -1,9 +1,9 @@
 // src/components/HouseState/HouseState.jsx
 import React, { useState, useEffect } from 'react';
 
-import { getTemperature, getHumidity, getMovement, getLight, getFanSpeed, setFanSpeed, getLightIntensity, setLightIntensity} from '../api';
-
-
+import {getAlerts, getTemperature, getHumidity, getMovement, getLight, getFanSpeed, setFanSpeed, getLightIntensity, setLightIntensity} from '../api';
+import { toast, ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 export default function HouseState() {
   const [sensors, setSensors] = useState({
@@ -117,9 +117,29 @@ function ManualAdjustment() {
       setLight(l);
     }, 2000);
 
-    return () => clearInterval(intervalId);
-  }, []);
+    // 3. Poll alert mỗi 10s
+    const intervalAlert = setInterval(async () => {
+      try {
+        const { data } = await getAlerts();
+        console.log(data);
+        if (data.length !== 0){
+          data.forEach(alert => {
+            toast.info(alert.message, {
+              position: "top-right",
+              autoClose: 5000,
+            });
+          });
+        }
+      } catch (err) {
+        console.error("Polling alerts failed:", err);
+      }
+    }, 10000);
 
+    return () => {
+      clearInterval(intervalId);
+      clearInterval(intervalAlert);
+    };
+  }, []);
   const handleFanChange = async e => {
     const v = +e.target.value;
     setFan(v);
@@ -137,6 +157,7 @@ function ManualAdjustment() {
     `linear-gradient(to right, ${color} 0%, ${color} ${value}%, #2d2d2d ${value}%, #2d2d2d 100%)`;
 
   return (
+  <>
     <div className="bg-[#484848] rounded-lg shadow p-4 w-1/2 space-y-6">
       {/* Fans */}
       <div>
@@ -188,6 +209,19 @@ function ManualAdjustment() {
         </div>
       </div>
     </div>
+
+    {/* Toast container */}
+    <ToastContainer
+      position="top-right"
+      autoClose={5000}
+      hideProgressBar={false}
+      newestOnTop={true}
+      closeOnClick
+      pauseOnHover
+      draggable
+      theme="dark"
+    />
+  </>
   );
 }
 
